@@ -1,7 +1,10 @@
 package com.example.projecteuf2m8;
 
 import android.os.Bundle;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -17,12 +20,27 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     // Coordenadas de ejemplo para una emisora de radio en Barcelona
     private static final double RADIO_STATION_LAT = 41.3851;
     private static final double RADIO_STATION_LNG = 2.1734;
-    private static final String STATION_NAME = "Ràdio Barcelona Music";
-    private static final String STATION_DESCRIPTION = "Emisora especializada en música independiente y alternativa. Transmitiendo desde el corazón de Barcelona las 24 horas del día.";
+    private static final String STATION_NAME = "🎵 Ràdio Barcelona Music";
+    private static final String STATION_DESCRIPTION = "📻 Emisora especializada en música independiente y alternativa\n🎶 Transmitiendo desde el corazón de Barcelona\n⏰ Las 24 horas del día\n📍 Plaça de Catalunya, Barcelona";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Verificar si Google Play Services está disponible
+        GoogleApiAvailability availability = GoogleApiAvailability.getInstance();
+        int resultCode = availability.isGooglePlayServicesAvailable(this);
+
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (availability.isUserResolvableError(resultCode)) {
+                availability.getErrorDialog(this, resultCode, 1).show();
+            } else {
+                Toast.makeText(this, "Google Play Services no está disponible", Toast.LENGTH_LONG).show();
+                finish();
+            }
+            return;
+        }
+
         setContentView(R.layout.activity_map);
 
         // Configurar la ActionBar
@@ -36,6 +54,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         if (mapFragment != null) {
             mapFragment.getMapAsync(this);
+        } else {
+            Toast.makeText(this, "Error al cargar el fragmento del mapa", Toast.LENGTH_LONG).show();
+            finish();
         }
     }
 
@@ -47,52 +68,48 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
+        try {
+            mMap = googleMap;
 
-        // Coordenadas de la emisora de radio
-        LatLng radioStationLocation = new LatLng(RADIO_STATION_LAT, RADIO_STATION_LNG);
-
-        // Crear marcador personalizado
-        MarkerOptions markerOptions = new MarkerOptions()
-                .position(radioStationLocation)
-                .title(STATION_NAME)
-                .snippet(STATION_DESCRIPTION)
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-
-        // Si tienes un icono personalizado, descomenta esta línea:
-        // .icon(BitmapDescriptorFactory.fromResource(R.drawable.radio_icon));
-
-        // Añadir el marcador al mapa
-        mMap.addMarker(markerOptions);
-
-        // Mover la cámara a la ubicación de la emisora
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(radioStationLocation, 15));
-
-        // Configurar el tipo de mapa
-        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-
-        // Habilitar controles de zoom
-        mMap.getUiSettings().setZoomControlsEnabled(true);
-        mMap.getUiSettings().setCompassEnabled(true);
-
-        // Configurar el info window (ventana de información del marcador)
-        mMap.setOnMarkerClickListener(marker -> {
-            marker.showInfoWindow();
-            return true;
-        });
-
-        // Personalizar la ventana de información
-        mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
-            @Override
-            public android.view.View getInfoWindow(com.google.android.gms.maps.model.Marker marker) {
-                return null; // Usar el diseño por defecto
+            if (mMap == null) {
+                Toast.makeText(this, "Error: Mapa no disponible", Toast.LENGTH_LONG).show();
+                finish();
+                return;
             }
 
-            @Override
-            public android.view.View getInfoContents(com.google.android.gms.maps.model.Marker marker) {
-                // Aquí podrías personalizar el contenido si quisieras
-                return null; // Usar el contenido por defecto
-            }
-        });
+            // Configurar el mapa ANTES de añadir marcadores
+            mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+            mMap.getUiSettings().setZoomControlsEnabled(true);
+            mMap.getUiSettings().setCompassEnabled(true);
+            mMap.getUiSettings().setMyLocationButtonEnabled(false); // Desactivar para evitar problemas de permisos
+
+            // Coordenadas de la emisora de radio
+            LatLng radioStationLocation = new LatLng(RADIO_STATION_LAT, RADIO_STATION_LNG);
+
+            // Crear marcador personalizado (simplificado)
+            MarkerOptions markerOptions = new MarkerOptions()
+                    .position(radioStationLocation)
+                    .title(STATION_NAME)
+                    .snippet(STATION_DESCRIPTION)
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET));
+
+            // Añadir el marcador al mapa
+            mMap.addMarker(markerOptions);
+
+            // Mover la cámara (con animación más suave)
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(radioStationLocation, 15));
+
+            // Listener para clicks en marcadores
+            mMap.setOnMarkerClickListener(marker -> {
+                marker.showInfoWindow();
+                return true;
+            });
+
+            Toast.makeText(this, "Mapa cargado correctamente", Toast.LENGTH_SHORT).show();
+
+        } catch (Exception e) {
+            Toast.makeText(this, "Error al configurar el mapa: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            finish();
+        }
     }
 }
