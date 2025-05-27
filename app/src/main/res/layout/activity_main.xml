@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:gravity="center">
+
+    <!-- Título del reproductor -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Reproductor de Audio"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="32dp"
+        android:textColor="@android:color/black" />
+
+    <!-- Zona para gestos -->
+    <View
+        android:id="@+id/gestureArea"
+        android:layout_width="300dp"
+        android:layout_height="200dp"
+        android:background="@drawable/gesture_area_background"
+        android:layout_marginBottom="32dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Área de gestos:\nDesliza → para Play\nDesliza ↓ para Stop\nToca para Pausa"
+        android:textAlign="center"
+        android:layout_marginBottom="24dp"
+        android:textSize="14sp" />
+
+    <!-- Botones de control -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="32dp">
+
+        <Button
+            android:id="@+id/btnPlay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="▶ PLAY"
+            android:layout_marginEnd="16dp"
+            android:backgroundTint="@android:color/holo_green_dark" />
+
+        <Button
+            android:id="@+id/btnPause"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="⏸ PAUSA"
+            android:layout_marginEnd="16dp"
+            android:backgroundTint="@android:color/holo_orange_dark" />
+
+        <Button
+            android:id="@+id/btnStop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="⏹ STOP"
+            android:backgroundTint="@android:color/holo_red_dark" />
+
+    </LinearLayout>
+
+    <!-- Estado actual -->
+    <TextView
+        android:id="@+id/tvStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Estado: Detenido"
+        android:textSize="16sp"
+        android:layout_marginBottom="24dp"
+        android:textColor="@android:color/black" />
+
+    <!-- Botón para abrir el mapa -->
+    <Button
+        android:id="@+id/btnMap"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="📍 VER EMISORA EN MAPA"
+        android:backgroundTint="@android:color/holo_blue_dark"
+        android:textColor="@android:color/white" />
+
+</LinearLayout>
